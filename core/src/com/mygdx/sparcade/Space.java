@@ -24,7 +24,7 @@ public class Space extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		img = new Texture("cat_5.png");
 
         //  load wind sound
         wind = Gdx.audio.newMusic(Gdx.files.internal("wind.wav"));
