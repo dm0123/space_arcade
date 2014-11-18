@@ -29,8 +29,8 @@ public class MainMenuScreen implements Screen{
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        game.font.draw(game.batch, "Welcome to Space CAT! ", 350, 250);
-        game.font.draw(game.batch, "Tap anywhere to begin!", 350, 200);
+        game.font.draw(game.batch, "Welcome to Space CAT! ", 300, 250);
+        game.font.draw(game.batch, "Tap anywhere to begin!", 300, 200);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
