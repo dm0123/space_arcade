@@ -86,50 +86,7 @@ public class GameScreen implements Screen
             camera.unproject(position);
         }
 
-        int r =  (int)(Math.random()*5) - 2;  // Рабочий рандом от -2 до 2
-        //int r =  (int)(Math.random()*3) -1;
-        enemy.speed += r;   // Все что я понял - не возможно работать со скоростью и координатами в целочисленном типе
-        if (enemy.speed > 20)
-            enemy.speed = 20;
-        enemy.speed = 4;
-        enemy.angle += 3;
-        if (enemy.angle >= 360)
-            enemy.angle = 0;
-
-        if (enemy.angle >= 338 || enemy.angle < 23)
-            enemy.bounds.y += enemy.speed;
-        if (enemy.angle >= 23 && enemy.angle < 68) {
-            enemy.bounds.x += enemy.speed;
-            enemy.bounds.y += enemy.speed;
-        }
-        if (enemy.angle >= 68 && enemy.angle < 113)
-            enemy.bounds.x += enemy.speed;
-        if (enemy.angle >= 113 && enemy.angle < 158) {
-            enemy.bounds.x += enemy.speed;
-            enemy.bounds.y -= enemy.speed;
-        }
-
-        if (enemy.angle >= 158 && enemy.angle < 203)
-            enemy.bounds.y -= enemy.speed;
-        if (enemy.angle >= 203 && enemy.angle < 248){
-            enemy.bounds.y -= enemy.speed;
-            enemy.bounds.x -= enemy.speed;
-        }
-        if (enemy.angle >= 248 && enemy.angle < 293)
-            enemy.bounds.x -= enemy.speed;
-        if (enemy.angle >= 293 && enemy.angle < 338) {
-            enemy.bounds.x -= enemy.speed;
-            enemy.bounds.y += enemy.speed;
-        }
-
-        if (enemy.bounds.x < 0)
-            enemy.bounds.x = 0;
-        if (enemy.bounds.y < 0)
-            enemy.bounds.y = 0;
-        if (enemy.bounds.x > 800 - 64)
-            enemy.bounds.x = 800 - 64;
-        if (enemy.bounds.y > 480 - 64)
-            enemy.bounds.y = 480 - 64;
+        enemy.logic();
 
         if (ship.bounds.y < 0)
             ship.bounds.y = 0;
