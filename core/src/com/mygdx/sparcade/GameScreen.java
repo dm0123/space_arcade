@@ -28,7 +28,7 @@ public class GameScreen implements Screen
 
         // create starship
         game.enemy = new Enemy(new Vector2(800/2-64/2, 200));
-        game.ship = new Starship(new Vector2(0, 480/2 - 50));
+        game.ship = new Starship(new Vector2(800 - 170, 480/2 - 50));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
@@ -55,25 +55,49 @@ public class GameScreen implements Screen
         game.batch.draw(game.fon, 0, 0);
         game.font.draw(game.batch, "Enemy class test, bounds: x=" + (game.enemy.bounds.x) + ", y= " + (game.enemy.bounds.y)+", game.game.enemy speed= " + (game.enemy.speed)+" game.enemy state: "+game.enemy.state, 0, 470);
         game.batch.draw(game.enemy.enemypic, game.enemy.bounds.x, game.enemy.bounds.y);
-        if (Gdx.input.isTouched()) {       // Управление кораблем, не хорошо что весь код в  одной куче
-            this.position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(position);
-            if ((int) (this.position.x) < 200 && ((int) (this.position.y) < 200)) {
-                game.ship.bounds.y -= 2;
-                game.batch.draw(game.ship.shipPicLeft, game.ship.bounds.x, game.ship.bounds.y);
+        if (Gdx.input.isTouched() || Gdx.input.isTouched(1)) { // Управление кораблем, не хорошо что весь код в  одной куче
+            Vector3 touch = new Vector3();
+            Vector3 touch2 = new Vector3();
+            touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touch);
+            game.font.draw(game.batch, "Touch 1 x - "+Gdx.input.getX()+", y - "+Gdx.input.getX(), 0, 60);
+            if (Gdx.input.isTouched(1)) {
+                touch2.set(Gdx.input.getX(1), Gdx.input.getY(1), 0);
+                camera.unproject(touch2);
+                game.font.draw(game.batch, "Touch 2 x - "+Gdx.input.getX(1)+", y - "+Gdx.input.getX(1), 0, 20);
+                if (!Gdx.input.isTouched()) // Отпустили палец, удалили(ну как удалили) кор-ы тапа
+                    touch = touch2;
             }
-            else
-                if ((int) (this.position.x) < 200 && ((int) (this.position.y) > 200)) {
-                    game.ship.bounds.y += 2;
+            if (((int) (touch2.x) < 600)) {    // Если второй тап не связан с управлением, то все норм
+                if ((int) (touch.x) > 600 && ((int) (touch.y) < 240)) {  // Влево
+                    game.ship.bounds.y -= 3;
+                    game.batch.draw(game.ship.shipPicLeft, game.ship.bounds.x, game.ship.bounds.y);
+                } else if ((int) (touch.x) > 600 && ((int) (touch.y) > 240)) {  // Вправо
+                    game.ship.bounds.y += 3;
                     game.batch.draw(game.ship.shipPicRight, game.ship.bounds.x, game.ship.bounds.y);
-                }
-                else
+                } else
                     game.batch.draw(game.ship.shipPic, game.ship.bounds.x, game.ship.bounds.y);
-        }
+            }
+            else {  // Иначе выполнить только второй тап, но третий(второй раз первый) тап к сожалению не сработает
+                if ((int) (touch2.x) > 600 && ((int) (touch2.y) < 240)) {  // Влево
+                    game.ship.bounds.y -= 3;
+                    game.batch.draw(game.ship.shipPicLeft, game.ship.bounds.x, game.ship.bounds.y);
+                } else if ((int) (touch2.x) > 600 && ((int) (touch2.y) > 240)) {  // Вправо
+                    game.ship.bounds.y += 3;
+                    game.batch.draw(game.ship.shipPicRight, game.ship.bounds.x, game.ship.bounds.y);
+                } else
+                    game.batch.draw(game.ship.shipPic, game.ship.bounds.x, game.ship.bounds.y);
+            }  // Ну и отдельно обработка выстрелов
+            if (((int) (touch.x) < 600) && (int) (touch.x) > 400 && ((int) (touch.y) < 240) ||
+               ((int) (touch2.x) < 600) && (int) (touch2.x) > 400 && ((int) (touch2.y) < 240))
+                    game.font.draw(game.batch, "Fire the first gun!!!", 400, 220);
+            if (((int) (touch.x) < 600) && (int) (touch.x) > 400 && ((int) (touch.y) > 240) ||
+               ((int) (touch2.x) < 600) && (int) (touch2.x) > 400 && ((int) (touch2.y) > 240))
+                    game.font.draw(game.batch, "Fire the second gun!!!", 400, 260);
+            }
         else
             game.batch.draw(game.ship.shipPic, game.ship.bounds.x, game.ship.bounds.y);
         game.batch.end();
-
         game.enemy.logic();
 
         if (game.ship.bounds.y < 0)
