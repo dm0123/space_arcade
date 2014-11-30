@@ -1,5 +1,6 @@
 package com.mygdx.sparcade.model;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -16,7 +17,7 @@ public class Starship {
     public String pic = new String("starship.png");
     public String pic2 = new String("starship_left.png");
     public String pic3 = new String("starship_right.png");
-    public int sizex = 170, sizey = 100;
+    public Texture shipPic, shipPicLeft, shipPicRight;
 
 
     public Starship(Vector2 position)
