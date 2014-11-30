@@ -15,7 +15,7 @@ import com.mygdx.sparcade.model.Starship;
  * Created by Polomin on 17.11.2014.
  */
 public class GameScreen implements Screen
-{
+{  // Лох
     final Space game;
 
     private OrthographicCamera camera;
