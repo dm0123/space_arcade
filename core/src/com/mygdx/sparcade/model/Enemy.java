@@ -23,10 +23,10 @@ public class Enemy  extends Starship{
         int r =  (int)(Math.random()*5) - 2;  // Рабочий рандом от -2 до 2
         //int r =  (int)(Math.random()*3) -1;
         this.speed += r;   // Все что я понял - не возможно работать со скоростью и координатами в целочисленном типе
-        if (this.speed > 20)
-            this.speed = 20;
+//        if (this.speed > 20)
+//            this.speed = 20;
         this.speed = 4;
-        this.angle += 3;
+        this.angle += 2;
         if (this.angle >= 360)
             this.angle = 0;
 
@@ -56,13 +56,21 @@ public class Enemy  extends Starship{
             this.bounds.y += this.speed;
         }
 
-        if (this.bounds.x < 0)
+        if (this.bounds.x < 0) {
             this.bounds.x = 0;
-        if (this.bounds.y < 0)
+            angle += 160;
+        }
+        if (this.bounds.y < 0) {
             this.bounds.y = 0;
-        if (this.bounds.x > 800 - 64)
-            this.bounds.x = 800 - 64;
-        if (this.bounds.y > 480 - 64)
+            angle += 160;
+        }
+        if (this.bounds.x > 600 - 64) {
+            this.bounds.x = 600 - 64;
+            angle += 160;
+        }
+        if (this.bounds.y > 480 - 64) {
             this.bounds.y = 480 - 64;
+            angle += 160;
+        }
     }
 }

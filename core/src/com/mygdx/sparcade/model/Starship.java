@@ -18,6 +18,10 @@ public class Starship {
     public String pic2 = new String("starship_left.png");
     public String pic3 = new String("starship_right.png");
     public Texture shipPic, shipPicLeft, shipPicRight;
+    public int gun1x = 8;
+    public int gun1y = 10;
+    public int gun2x = 8;
+    public int gun2y = 74;
 
 
     public Starship(Vector2 position)
