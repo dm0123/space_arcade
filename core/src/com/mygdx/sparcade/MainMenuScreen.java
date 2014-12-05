@@ -17,7 +17,7 @@ public class MainMenuScreen implements Screen{
     {
         game = gam;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, 480, 800);
     }
 
     @Override
@@ -29,8 +29,8 @@ public class MainMenuScreen implements Screen{
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        game.font.draw(game.batch, "Welcome to Space CAT! ", 300, 250);
-        game.font.draw(game.batch, "Tap anywhere to begin!", 300, 200);
+        game.font.draw(game.batch, "Welcome to Space CAT! ",150, 450);
+        game.font.draw(game.batch, "Tap anywhere to begin!", 150, 400);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {

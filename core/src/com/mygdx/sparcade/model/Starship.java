@@ -9,16 +9,17 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Starship {
     static final int SIZEX = 170, SIZEY = 100;
+    public final  int velocity = 150;
     public enum State { LIVE, DEAD } // тут нужно подумать еще
+    public enum Move {LEFT, RIGHT, IDLE}
     public State state = State.LIVE;
-    public enum Direct { UP, LEFT, RIGHT } // тут нужно подумать еще
-    public Direct direct = Direct.UP;
+    public Move move = Move.IDLE;
+    public boolean fire = false;
     public Rectangle bounds = new Rectangle();
     public String pic = new String("starship.png");
     public String pic2 = new String("starship_left.png");
     public String pic3 = new String("starship_right.png");
     public Texture shipPic, shipPicLeft, shipPicRight;
-
 
     public Starship(Vector2 position)
     {
