@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -36,6 +37,7 @@ public class GameScreen extends InputAdapter implements Screen
 
     private OrthographicCamera camera;
     private Music wind;
+    private Sound meow;
     private Texture fireTexture = new Texture(Gdx.files.internal("fire-button.png"));
     private Texture bulletTexture = new Texture(Gdx.files.internal("bull.png"));
     private int shipPic;
@@ -60,6 +62,7 @@ public class GameScreen extends InputAdapter implements Screen
 
         //  load wind sound
         wind = Gdx.audio.newMusic(Gdx.files.internal("wind.wav"));
+        meow = Gdx.audio.newSound(Gdx.files.internal("meow.wav"));
         Gdx.input.setInputProcessor(this);
         for(int i = 0; i < 5; i++){
             touches.put(i, new TouchInfo());
@@ -76,7 +79,7 @@ public class GameScreen extends InputAdapter implements Screen
         game.batch.begin();
         game.batch.draw(game.fon, 0, 0);
         game.font.drawMultiLine(game.batch, "Enemy class test, bounds: x=" + (game.enemy.bounds.x) + ", y= " + (game.enemy.bounds.y)+" game.enemy state: "+game.enemy.state, 0, 790);
-        game.batch.draw(game.enemy.enemypic, game.enemy.bounds.x, game.enemy.bounds.y);
+        if (game.enemy.state == Starship.State.LIVE) game.batch.draw(game.enemy.enemypic, game.enemy.bounds.x, game.enemy.bounds.y);
         game.batch.draw(fireTexture, 480-64, 0);
 
         for(int i = 0; i < 5; i++){
@@ -138,14 +141,18 @@ public class GameScreen extends InputAdapter implements Screen
                 game.batch.draw(bulletTexture, item.position.x+5, item.position.y+140);
             else
                 game.batch.draw(bulletTexture, item.position.x+70, item.position.y+140);
-//            if (!item.alive) {
+            if (game.enemy.bounds.contains(item.position)) {
+                meow.play();
+                game.enemy.bounds.set(0, 0, 0, 0);
+                game.enemy.state = Starship.State.DEAD;
+            }
             if(item.position.x > Gdx.graphics.getWidth() || item.position.x < 0 || item.position.y > Gdx.graphics.getHeight() || item.position.y < 0){
                 game.activeBullets.removeIndex(i);
                 game.bulletPool.free(item);
             }
         }
         game.batch.end();
-        game.enemy.logic();
+        if (game.enemy.state == Starship.State.LIVE) game.enemy.logic();
         game.ship.move = Starship.Move.IDLE;
         shipPic = 1;
         game.ship.fire = false;
