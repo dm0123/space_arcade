@@ -16,6 +16,7 @@ public class Enemy  extends Starship{
     public Enemy(Vector2 position)
     {
        super(position);
+       this.setSize(64, 64);
     }
 
     public void logic()

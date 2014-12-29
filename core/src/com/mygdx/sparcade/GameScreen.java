@@ -9,8 +9,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.sparcade.model.Bullet;
 import com.mygdx.sparcade.model.Enemy;
 import com.mygdx.sparcade.model.Starship;
@@ -31,7 +33,6 @@ public class GameScreen extends InputAdapter implements Screen
     }
 
     private Map<Integer,TouchInfo> touches = new HashMap<Integer,TouchInfo>();
-    private  int frames = 0;
 
     final Space game;
 
@@ -84,6 +85,8 @@ public class GameScreen extends InputAdapter implements Screen
 
         for(int i = 0; i < 5; i++){
             if(touches.get(i).touched) {
+                game.font.draw(game.batch, "touchX"+i+": "+touches.get(i).touchX, 0, 200+10*i);
+                game.font.draw(game.batch, "touchY"+i+": "+touches.get(i).touchY, 0, 220+10*i);
                 if(touches.get(i).touchX < game.ship.bounds.x-1 && touches.get(i).touchY > 600)
                 {
                     game.ship.move = Starship.Move.LEFT;
@@ -93,7 +96,7 @@ public class GameScreen extends InputAdapter implements Screen
                     game.ship.move = Starship.Move.RIGHT;
                 }
 //                if(touches.get(i).touchX > Gdx.graphics.getWidth()-20 && touches.get(i).touchY < Gdx.graphics.getHeight()-780)
-                if(touches.get(i).touchX > Gdx.graphics.getWidth()-20)
+                if(touches.get(i).touchX > Gdx.graphics.getWidth()-50 && touches.get(i).touchY >100 && touches.get(i).touchY < Gdx.graphics.getHeight()-400)
                 {
                     game.ship.fire = true;
                 }
@@ -102,6 +105,7 @@ public class GameScreen extends InputAdapter implements Screen
         game.font.draw(game.batch, "game.ship.move: "+game.ship.move, 0, 300);
         game.font.draw(game.batch, "game.ship.fire: "+game.ship.fire, 0, 315);
         game.font.draw(game.batch, "FPS: "+1/delta, 0, 330);
+        if(game.enemy.state == Starship.State.LIVE) game.font.draw(game.batch, "LIFE: "+game.enemy.life, game.enemy.bounds.getX(), game.enemy.bounds.getY()+65);
         switch(game.ship.move){
             case LEFT:
                 if(game.ship.bounds.x > 0)
@@ -124,41 +128,46 @@ public class GameScreen extends InputAdapter implements Screen
             case 3:
                 game.batch.draw(game.ship.shipPicRight, game.ship.bounds.x, game.ship.bounds.y);
         }
-        if(game.ship.fire && frames %10 == 0)
-        {
-            Bullet item = game.bulletPool.obtain();
-            item.init(game.ship.bounds.x, game.ship.bounds.y);
-            game.activeBullets.add(item);
-        }
-
-        Bullet item;
         int len = game.activeBullets.size;
+        if(game.ship.fire)
+        {
+            Timer.schedule(new Timer.Task(){
+                @Override
+                public void run()
+                {
+                    Bullet item = game.bulletPool.obtain();
+                    item.init(game.ship.bounds.x, game.ship.bounds.y);
+                    game.activeBullets.add(item);
+                    Timer.instance().clear();
+                }
+            }, 0.3f, 1.0f);
+        }
+        Bullet item;
         game.font.draw(game.batch, "length of active bullets list: "+len, 0, 290);
         for (int i = len; --i >= 0;) {
             item = game.activeBullets.get(i);
             item.update(delta);
-            if(frames%2 == 0)
-                game.batch.draw(bulletTexture, item.position.x+5, item.position.y+140);
-            else
-                game.batch.draw(bulletTexture, item.position.x+70, item.position.y+140);
+            game.batch.draw(bulletTexture, item.position.x+5, item.position.y+140);
+            game.batch.draw(bulletTexture, item.position.x+70, item.position.y+140);
             if (game.enemy.bounds.contains(item.position)) {
-                meow.play();
-                game.enemy.bounds.set(0, 0, 0, 0);
-                game.enemy.state = Starship.State.DEAD;
+                game.enemy.life--;
             }
             if(item.position.x > Gdx.graphics.getWidth() || item.position.x < 0 || item.position.y > Gdx.graphics.getHeight() || item.position.y < 0){
                 game.activeBullets.removeIndex(i);
                 game.bulletPool.free(item);
             }
         }
+        if(game.enemy.life < 0) {
+            meow.play();
+            game.enemy.life = 0;
+            game.enemy.bounds.set(0, 0, 0, 0);
+            game.enemy.state = Starship.State.DEAD;
+        }
         game.batch.end();
         if (game.enemy.state == Starship.State.LIVE) game.enemy.logic();
         game.ship.move = Starship.Move.IDLE;
         shipPic = 1;
         game.ship.fire = false;
-        frames++;
-        if(frames>55)
-            frames = 0;
     }
 
     @Override
