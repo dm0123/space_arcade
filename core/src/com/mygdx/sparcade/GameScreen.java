@@ -98,12 +98,17 @@ public class GameScreen extends InputAdapter implements Screen
 //                if(touches.get(i).touchX > Gdx.graphics.getWidth()-20 && touches.get(i).touchY < Gdx.graphics.getHeight()-780)
                 if(touches.get(i).touchX > Gdx.graphics.getWidth()-50 && touches.get(i).touchY >100 && touches.get(i).touchY < Gdx.graphics.getHeight()-400)
                 {
-                    game.ship.fire = true;
+                    game.ship.rightFire = true;
+                }
+                if(touches.get(i).touchX < 50 && touches.get(i).touchY >100 && touches.get(i).touchY < Gdx.graphics.getHeight()-400)
+                {
+                    game.ship.leftFire = true;
                 }
             }
         }
         game.font.draw(game.batch, "game.ship.move: "+game.ship.move, 0, 300);
-        game.font.draw(game.batch, "game.ship.fire: "+game.ship.fire, 0, 315);
+        game.font.draw(game.batch, "game.ship.rightFire: "+game.ship.rightFire, 0, 315);
+        game.font.draw(game.batch, "game.ship.leftFire: "+game.ship.leftFire, 0, 325);
         game.font.draw(game.batch, "FPS: "+1/delta, 0, 330);
         if(game.enemy.state == Starship.State.LIVE) game.font.draw(game.batch, "LIFE: "+game.enemy.life, game.enemy.bounds.getX(), game.enemy.bounds.getY()+65);
         switch(game.ship.move){
@@ -129,15 +134,18 @@ public class GameScreen extends InputAdapter implements Screen
                 game.batch.draw(game.ship.shipPicRight, game.ship.bounds.x, game.ship.bounds.y);
         }
         int len = game.activeBullets.size;
-        if(game.ship.fire)
+        if(game.ship.rightFire || game.ship.leftFire)
         {
             Timer.schedule(new Timer.Task(){
                 @Override
                 public void run()
                 {
                     Bullet item = game.bulletPool.obtain();
-                    item.init(game.ship.bounds.x, game.ship.bounds.y);
+                    Bullet item2 = game.bulletPool.obtain();
+                    item.init(game.ship.bounds.x + 5, game.ship.bounds.y + 140);
                     game.activeBullets.add(item);
+                    item2.init(game.ship.bounds.x + 70, game.ship.bounds.y + 140);
+                    game.activeBullets.add(item2);
                     Timer.instance().clear();
                 }
             }, 0.3f, 1.0f);
@@ -147,8 +155,7 @@ public class GameScreen extends InputAdapter implements Screen
         for (int i = len; --i >= 0;) {
             item = game.activeBullets.get(i);
             item.update(delta);
-            game.batch.draw(bulletTexture, item.position.x+5, item.position.y+140);
-            game.batch.draw(bulletTexture, item.position.x+70, item.position.y+140);
+            game.batch.draw(bulletTexture, item.position.x, item.position.y);
             if (game.enemy.bounds.contains(item.position)) {
                 game.enemy.life--;
             }
@@ -167,7 +174,8 @@ public class GameScreen extends InputAdapter implements Screen
         if (game.enemy.state == Starship.State.LIVE) game.enemy.logic();
         game.ship.move = Starship.Move.IDLE;
         shipPic = 1;
-        game.ship.fire = false;
+        game.ship.rightFire = false;
+        game.ship.leftFire = false;
     }
 
     @Override
@@ -217,6 +225,18 @@ public class GameScreen extends InputAdapter implements Screen
             touches.get(pointer).touchX = 0;
             touches.get(pointer).touchY = 0;
             touches.get(pointer).touched = false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer)
+    {
+        if(pointer<5)
+        {
+            touches.get(pointer).touchX = screenX;
+            touches.get(pointer).touchY = screenY;
+            touches.get(pointer).touched = true;
         }
         return true;
     }

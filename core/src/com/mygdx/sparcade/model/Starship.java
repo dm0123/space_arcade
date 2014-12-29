@@ -14,7 +14,8 @@ public class Starship {
     public enum Move {LEFT, RIGHT, IDLE}
     public State state = State.LIVE;
     public Move move = Move.IDLE;
-    public boolean fire = false;
+    public boolean rightFire = false;
+    public boolean leftFire = false;
     public Rectangle bounds = new Rectangle();
     public String pic = new String("starship.png");
     public String pic2 = new String("starship_left.png");
